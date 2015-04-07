@@ -34,13 +34,10 @@ public:
 
 
 private:
-	boolean standby = true;
+	boolean standby;
 
 	MouseMotor* leftMotor;
 	MouseMotor* rightMotor;
-
-	const int kp = 10;
-	int sampleTime = 50;
 
 	int leftMotorDirection; 
 	int rightMotorDirection;
@@ -64,8 +61,8 @@ private:
 
 	long targetForwardVelocity;	//tick/s
 	long targetCCWVelocity;	//tick/s
-	long lastForwardVelocity = 0;	//tick/s
-	long lastCCWVelocity = 0;	//tick/s
+	long lastForwardVelocity;	//tick/s
+	long lastCCWVelocity;	//tick/s
 
 	long targetForwardTick;
 	long targetCCWTick;

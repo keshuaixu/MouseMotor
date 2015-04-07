@@ -21,16 +21,16 @@ void KinematicController::setAcceleration(
 	this->forwardDeceleration = mmToTick(forwardDeceleration);
 	this->ccwDeceleration = degToTick(ccwDeceleration);
 
-	atomicForwardAcceleration = (long)forwardAcceleration * sampleTime / 1000;
-	atomicForwardDeceleration = (long)forwardDeceleration * sampleTime / 1000;
-	atomicCCWAcceleration = (long)ccwAcceleration * sampleTime / 1000;
-	atomicCCWDeceleration = (long)ccwDeceleration * sampleTime / 1000;
+	atomicForwardAcceleration = (long)forwardAcceleration * 50 / 1000;
+	atomicForwardDeceleration = (long)forwardDeceleration * 50 / 1000;
+	atomicCCWAcceleration = (long)ccwAcceleration * 50 / 1000;
+	atomicCCWDeceleration = (long)ccwDeceleration * 50 / 1000;
 }
 
 
 boolean KinematicController::run(){
 	unsigned long currentTime = millis();
-	if (currentTime - lastRunTime < sampleTime){
+	if (currentTime - lastRunTime < 50){
 		return false;
 	}
 
@@ -56,8 +56,8 @@ boolean KinematicController::run(){
 			standby = false;
 		}
 
-		leftMotor->setSpeed(calculateLeftWheelSpeed(forwardOutput, ccwOutput));
-		rightMotor->setSpeed(calculateRightWheelSpeed(forwardOutput, ccwOutput));
+		leftMotor->go(calculateLeftWheelSpeed(forwardOutput, ccwOutput));
+		rightMotor->go(calculateRightWheelSpeed(forwardOutput, ccwOutput));
 		lastForwardVelocity = forwardOutput;
 		lastCCWVelocity = ccwOutput;
 	} else if (state = KINEMATIC_OFF) {
@@ -86,14 +86,14 @@ void KinematicController::goPosition(int forwardDistance, int ccwAngle, unsigned
 
 void KinematicController::brake(){
 	state = KINEMATIC_OFF;
-	leftMotor->setState(MOTORSTATE_BRAKE);
-	rightMotor->setState(MOTORSTATE_BRAKE);
+	leftMotor->brake();
+	rightMotor->brake();
 }
 
 void KinematicController::coast(){
 	state = KINEMATIC_OFF;
-	leftMotor->setState(MOTORSTATE_COAST);
-	rightMotor->setState(MOTORSTATE_COAST);
+	leftMotor->go(0);
+	rightMotor->go(0);
 }
 
 void KinematicController::_goPosition(int forwardDistance, int ccwAngle, unsigned int forwardSpeed, unsigned int ccwSpeed){
@@ -124,11 +124,11 @@ long KinematicController::calculateRightWheelSpeed(long forwardVelocity, long cc
 }
 
 long KinematicController::calculateForwardTick(){
-	return (leftMotor->getEncoder()*leftMotorDirection + rightMotor*rightMotorDirection->getEncoder())/2;
+	return (leftMotor->getEncoder()*leftMotorDirection + rightMotor->getEncoder()*rightMotorDirection)/2;
 }
 
 long KinematicController::calculateCCWTick(){
-	return (-leftMotor->getEncoder()*leftMotorDirection + rightMotor*rightMotorDirection->getEncoder())/2;
+	return (-leftMotor->getEncoder()*leftMotorDirection + rightMotor->getEncoder()*rightMotorDirection)/2;
 }
 
 long KinematicController::speedRamp(long last, long target,long up, long down){

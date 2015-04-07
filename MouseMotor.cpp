@@ -9,7 +9,7 @@ MouseMotor::MouseMotor(int ph, int en, int nsleep, long* encoder){
 
 void MouseMotor::go(int speed){
 	digitalWrite(en, 1);
-	digitalWrite(ph, (speed > 0) ? 0, 1);
+	digitalWrite(ph, (speed > 0) ? 0: 1);
 	analogWrite(nsleep, abs(speed));
 }
 
@@ -18,5 +18,5 @@ void MouseMotor::brake(){
 }
 
 long MouseMotor::getEncoder(){
-	return encoder;
+	return *encoder;
 }
