@@ -13,8 +13,16 @@ void MouseMotor::go(int speed){
 	analogWrite(nsleep, abs(speed));
 }
 
+void MouseMotor::goVelocity(int speed){
+	go(speed);
+}
+
 void MouseMotor::brake(){
 	digitalWrite(en, 0);
+}
+
+void MouseMotor::coast(){
+	go(0);
 }
 
 long MouseMotor::getEncoder(){
